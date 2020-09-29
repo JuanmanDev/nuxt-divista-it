@@ -73,6 +73,17 @@
                 {{ props.row.location.latitude }}
                 {{ props.row.location.longitude }}
             </b-table-column>
+            
+            <b-table-column field="maps" label="maps" sortable numeric v-slot="props">
+              <a
+                :href="`http://www.google.com/maps/place/${ props.row.location.latitude },${ props.row.location.longitude }`"
+                target="_blank"
+              >
+                <b-button>
+                  See on Google Maps
+                </b-button>
+              </a>
+            </b-table-column>
         </b-table>
   </section>
 </template>
@@ -94,7 +105,7 @@ export default {
                 sortIcon: 'arrow-up',
                 sortIconSize: 'is-small',
                 currentPage: 1,
-                perPage: 5
+                perPage: 10
             }
         },
         async created() {
