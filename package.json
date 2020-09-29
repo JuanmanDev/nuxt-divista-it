@@ -18,6 +18,7 @@
     "graphql": "^15.3.0",
     "graphql-request": "^3.1.0",
     "leaflet": "^1.7.1",
+    "node-fetch": "^2.6.1",
     "nuxt": "^2.14.5",
     "nuxt-buefy": "^0.4.3",
     "nuxt-leaflet": "^0.0.22",

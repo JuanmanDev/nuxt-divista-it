@@ -72,8 +72,7 @@
 </template>
 
 <script lang="ts">
-const URL_PARKING_DATA = "https://datos.madrid.es/egob/catalogo/202625-0-aparcamientos-publicos.json";
-const MOCK_DATA = require("../mocks/parkings.json");
+import getData from "../plugins/getMadridData";
 
 export default {
   data() {
@@ -97,8 +96,8 @@ export default {
     }
   },
   async created() {
-    // const result = await this.$axios.get(URL_PARKING_DATA); /// TODO FIX CORS WITH PROXY
-    this.data = MOCK_DATA["@graph"];
+    const data = await getData();
+    this.data = data["@graph"];
     this.getDistrictAndArea()
     if (this.browserSupportsGeolocation) {
       this.tryGetDistance();
