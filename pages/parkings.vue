@@ -1,5 +1,7 @@
 <template>
+  <client-only>
   <section class="section">
+        <div class="box has-text-centered">
     <h2 class="title is-3 has-text-grey">
       Parkings  <b-icon
         icon="car"
@@ -66,6 +68,10 @@
             </b-table-column>
             <b-table-column field="address" label="Address" sortable numeric v-slot="props">
                 <span v-html="props.row.address['street-address']"></span>
+                <br>
+                <span v-html="props.row.address.districtName"></span>
+                <span v-html="props.row.address.areaName"></span>
+                <br>
                 <span v-html="props.row.address['postal-code']"></span>
                 <span v-html="props.row.address.locality"></span>
             </b-table-column>
@@ -74,7 +80,11 @@
                 {{ props.row.location.longitude }}
             </b-table-column>
             
-            <b-table-column field="maps" label="maps" sortable numeric v-slot="props">
+            <b-table-column field="distance" label="Distance" v-if="calulatedDistance" sortable numeric v-slot="props">
+              XXXX km
+            </b-table-column>
+            
+            <b-table-column field="maps" label="Maps" sortable numeric v-slot="props">
               <a
                 :href="`http://www.google.com/maps/place/${ props.row.location.latitude },${ props.row.location.longitude }`"
                 target="_blank"
@@ -85,7 +95,17 @@
               </a>
             </b-table-column>
         </b-table>
+          <b-button
+            type="is-primary"
+            v-if="browserSupportsGeolocation && !calulatedDistance"
+            @click="tryGetDistance()"
+          >
+            <b-icon icon="map-marker-distance"></b-icon>
+            <span> Calculate Distance from current position </span>
+          </b-button>
+        </div>
   </section>
+  </client-only>
 </template>
 
 <script lang="ts">
@@ -105,14 +125,85 @@ export default {
                 sortIcon: 'arrow-up',
                 sortIconSize: 'is-small',
                 currentPage: 1,
-                perPage: 10
+                perPage: 10,
+                calulatedDistance: false,
+                userCoordinates: {
+                  latitude: 0,
+                  longitude: 0,
+                },
             }
         },
         async created() {
           // const result = await this.$axios.get(URL_PARKING_DATA); /// TODO FIX CORS WITH PROXY
           this.data = MOCK_DATA["@graph"];
+          this.getDistrictAndArea()
+          if (this.browserSupportsGeolocation) {
+            this.tryGetDistance();
+          }
           this.isLoading = false;
-        }
+        },
+        computed: {
+          browserSupportsGeolocation() {
+            if (process.browser) {
+              return !!navigator.geolocation;
+            }
+            return false;
+          },
+        },
+        methods: {
+          getDistrictAndArea() {
+            for (let parking of this.data) {
+              parking.address.districtName = parking.address.district["@id"].substring(parking.address.district["@id"].lastIndexOf("/") + 1);
+              parking.address.areaName = parking.address.area["@id"].substring(parking.address.area["@id"].lastIndexOf("/") + 1);
+            }
+          },
+          async tryGetDistance(){
+            if (this.browserSupportsGeolocation) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                this.calulatedDistance = true;
+                this.userCoordinates = position.coords as {
+                  latitude: number,
+                  longitude: number,
+                };
+
+                if (this.data) {
+                  for (let parking of this.data) {
+                    parking.distance = this.distance(
+                      this.userCoordinates.latitude,
+                      this.userCoordinates.longitude,
+                      parking.location.latitude,
+                      parking.location.longitude,
+                      'K'
+                      );
+                  }
+                }
+
+              });
+            }
+          },
+          // https://www.geodatasource.com/developers/javascript
+          distance(lat1: number, lon1: number, lat2: number, lon2: number, unit: 'M' | 'K' | 'N') {
+            if ((lat1 == lat2) && (lon1 == lon2)) {
+              return 0;
+            }
+            else {
+              var radlat1 = Math.PI * lat1/180;
+              var radlat2 = Math.PI * lat2/180;
+              var theta = lon1-lon2;
+              var radtheta = Math.PI * theta/180;
+              var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+              if (dist > 1) {
+                dist = 1;
+              }
+              dist = Math.acos(dist);
+              dist = dist * 180/Math.PI;
+              dist = dist * 60 * 1.1515;
+              if (unit=="K") { dist = dist * 1.609344 }
+              if (unit=="N") { dist = dist * 0.8684 }
+              return dist;
+            }
+          }
+        },
 }
 </script>
 
