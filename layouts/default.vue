@@ -71,6 +71,11 @@ export default {
           title: 'Madrid Parkings Map',
           icon: 'map',
           to: { name: 'parkingsMap' }
+        },
+        {
+          title: 'Weather',
+          icon: 'cloud',
+          to: { name: 'weather' }
         }
       ]
     }
