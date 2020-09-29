@@ -66,6 +66,11 @@ export default {
           title: 'Madrid Parkings',
           icon: 'car',
           to: { name: 'parkings' }
+        },
+        {
+          title: 'Madrid Parkings Map',
+          icon: 'map',
+          to: { name: 'parkingsMap' }
         }
       ]
     }
