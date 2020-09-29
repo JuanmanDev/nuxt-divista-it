@@ -63,9 +63,9 @@ export default {
           to: { name: 'index' }
         },
         {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
+          title: 'Madrid Parkings',
+          icon: 'car',
+          to: { name: 'parkings' }
         }
       ]
     }
