@@ -81,7 +81,7 @@
             </b-table-column>
             
             <b-table-column field="distance" label="Distance" v-if="calulatedDistance" sortable numeric v-slot="props">
-              XXXX km
+              {{ props.row.distance.toFixed(1) }} km
             </b-table-column>
             
             <b-table-column field="maps" label="Maps" sortable numeric v-slot="props">
@@ -95,6 +95,7 @@
               </a>
             </b-table-column>
         </b-table>
+        <br>
           <b-button
             type="is-primary"
             v-if="browserSupportsGeolocation && !calulatedDistance"
@@ -131,6 +132,7 @@ export default {
                   latitude: 0,
                   longitude: 0,
                 },
+                buttonGeoLocationClicks: 0,
             }
         },
         async created() {
@@ -157,7 +159,16 @@ export default {
               parking.address.areaName = parking.address.area["@id"].substring(parking.address.area["@id"].lastIndexOf("/") + 1);
             }
           },
-          async tryGetDistance(){
+          async tryGetDistance() {
+            this.buttonGeoLocationClicks++;
+            if (this.buttonGeoLocationClicks % 4 === 0) {
+                this.$buefy.notification.open({ 
+                  type: 'is-warning',
+                  message: 'Please, ensure location is allowed in site settings of yout browser.',
+                  duration: 12000,
+                  "has-icon": true
+                  })
+            }
             if (this.browserSupportsGeolocation) {
               navigator.geolocation.getCurrentPosition((position) => {
                 this.calulatedDistance = true;
