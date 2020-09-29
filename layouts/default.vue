@@ -7,14 +7,10 @@
     >
       <div class="navbar-brand">
         <a
-          class="navbar-item"
           href="/"
+          class="navbar-item big-title"
         >
-          <img
-            src="~assets/buefy.png"
-            alt="Buefy"
-            height="28"
-          >
+          Juan Manuel Bécares Silva - Nuxt Demo
         </a>
 
         <div class="navbar-burger">
@@ -63,12 +59,31 @@ export default {
           to: { name: 'index' }
         },
         {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
+          title: 'Madrid Parkings',
+          icon: 'car',
+          to: { name: 'parkings' }
+        },
+        {
+          title: 'Madrid Parkings Map',
+          icon: 'map',
+          to: { name: 'parkingsMap' }
+        },
+        {
+          title: 'Weather',
+          icon: 'cloud',
+          to: { name: 'weather' }
         }
       ]
     }
   }
 }
 </script>
+
+<style lang="sass">
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap')
+
+.big-title 
+  font-family: "Lobster"
+  font-size: 24pt
+
+</style>

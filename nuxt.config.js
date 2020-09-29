@@ -29,7 +29,9 @@ export default {
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     // https://go.nuxtjs.dev/typescript
-    '@nuxt/typescript-build'
+    '@nuxt/typescript-build',
+    // https://github.com/schlunsen/nuxt-leaflet
+    { src: 'nuxt-leaflet', mode: 'client' },
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
